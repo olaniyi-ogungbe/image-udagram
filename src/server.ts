@@ -32,23 +32,24 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   app.get("/filteredimage", async (req: Request, res: Response) => {
     
     
+ 
     const image_url = req.query.image_url.toString();
 
-    //validating image url
-    if(!image_url){
+    // Validating Image url
+    if(image_url){
+
+      //calling filterImageFromUrl
+      const filtered_image_url = await filterImageFromURL(image_url);
+      
+      //sending the result file
+      return res.status(200).sendFile(filtered_image_url, () => {
+
+        //deleting files on server
+         deleteLocalFiles([filtered_image_url]);
+        })
+    }else{
       return res.status(400).send(`Please add an image url` );
     }
-
-
-    //calling filterImageFromURL
-    const filtered_image_url = await filterImageFromURL(image_url);
-
-    //sending resulting file
-    return res.status(200).sendFile(filtered_image_url, () => {
-      deleteLocalFiles([filtered_image_url]);
-    })
-    
-    
     
 
   })
